@@ -90,9 +90,7 @@ def print_out(threshold_tuple):
         title('Thresholded image')
         show()
 
-def create_histogram(data_br, data_m):
-    hist(data_m[0,:])
+def create_histogram(data_tuple):
+    data_br, data_m = data_tuple
+    hist(data_m[0])
     show()
-
-# print_out(threshold_image(im, False))
-create_histogram(load_euroc_dataset())
