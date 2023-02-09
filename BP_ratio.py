@@ -9,34 +9,41 @@ from copy import copy
 
 # Read image and initialize variables
 im = imread('Images/Maden.jpg')
-brightPixCounter = 0
-dimPixCounter = 0
 
-#Convert to gray-scale
-gray_image = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
+
+
 
 # Create thresholded picture. To take either 0 or 255 in pixel value. 
-imbw = gray_image>gray_image.mean()
-imbw = img_as_ubyte(imbw)
+def threshold_image(image):
+    #Initialize locals: 
+    brightPixCounter = 0
+    dimPixCounter = 0
+    #Convert to gray-scale
+    imgs = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    imbw = imgs>imgs.mean()
+    imbw = img_as_ubyte(imbw)
+    # Flatten image
+    imbw_flt = copy(imbw)
+    imbw_flt.flatten()
+    for i in imbw_flt:
+        for j in i:
+            if j == 255:
+                brightPixCounter += 1
+            else:
+                dimPixCounter += 1
+    return brightPixCounter, dimPixCounter, imbw       
 
-# Flatten image
-imbw_flt = copy(imbw)
-imbw_flt.flatten()
+# Function to print out current processed image.    
+def print_out(threshold_tuple):
+    BP, DP, im = threshold_tuple
+    print("Number of Bright pixels: ",BP)
+    print("Number of Dim Pixels: ",DP)
+    print("Total number of pixels in image: ", im.size)
+    print("Percentage of Bright Pixels: ", BP/im.size * 100)
+    print("Percentage of Dim Pixels: ", DP/im.size * 100)
+    print("Pixel ratio is: ", BP/DP)
+    imshow(im, cmap='gray')
+    title('Thresholded image')
+    show()
 
-for i in imbw_flt:
-    for j in i:
-        if j == 255:
-            brightPixCounter += 1
-        else:
-            dimPixCounter += 1
-        
-        
-print("Number of Bright pixels: ",brightPixCounter)
-print("Number of Dim Pixels: ",dimPixCounter)
-print("Total number of pixels in image: ", imbw.size)
-print("Percentage of Bright Pixels: ", brightPixCounter/imbw.size * 100)
-print("Percentage of Dim Pixels: ", dimPixCounter/imbw.size * 100)
-print("Pixel ratio is: ", brightPixCounter/dimPixCounter)
-imshow(imbw, cmap='gray')
-title('Thresholded image')
-show()
+print_out(threshold_image(im))
