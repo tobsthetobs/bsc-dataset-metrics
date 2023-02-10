@@ -100,5 +100,16 @@ def feedman_bins(data):
 # Function to plot histograms
 def create_histogram(data_tuple):
     data_br, data_m = data_tuple
-    sns.displot(data_br[0], bins=feedman_bins(data_br[0]), kde=True)
+    f, ax = plt.subplots(2,2)
+    sns.histplot(data_br[0], bins=feedman_bins(data_br[0]), kde=True, ax=ax[0,0])
+    ax[0,0].set_title("pixel ratio cam0")
+    sns.histplot(data_m[0], bins=feedman_bins(data_m[0]), kde=True, ax=ax[0,1])
+    ax[0,1].set_title("Mean image intensity cam0")
+    sns.histplot(data_br[1], bins=feedman_bins(data_br[1]), kde=True, ax=ax[1,0])
+    ax[1,0].set_title("pixel ratio cam1")
+    sns.histplot(data_m[1], bins=feedman_bins(data_m[1]), kde=True, ax=ax[1,1])
+    ax[1,1].set_title("Mean image intensity cam1")
+    plt.tight_layout()
+    plt.show()
 
+create_histogram(load_euroc_dataset())
