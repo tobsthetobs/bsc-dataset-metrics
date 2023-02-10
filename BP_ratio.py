@@ -5,6 +5,7 @@ import cv2
 import pandas as pd
 import os
 import tensorflow as tf
+import seaborn as sns
 from tensorflow import keras
 import matplotlib.image as mpimg
 from imageio import imread, imwrite
@@ -12,6 +13,7 @@ from pylab import *
 from skimage.util import img_as_ubyte, img_as_float
 from matplotlib.pyplot import imshow
 from copy import copy
+
 
 # Read image and initialize variables
 im = imread('Datasets/EuRoC/cam0/1403638127245096960.png')
@@ -64,23 +66,21 @@ def threshold_image(image, include):
     # Flatten image
     imbw_flt = copy(imbw)
     imbw_flt.flatten()
-    for i in imbw_flt:
-        for j in i:
-            if j == 255:
-                brightPixCounter += 1
-            else:
-                dimPixCounter += 1
+    _, counts = np.unique(imbw_flt, return_counts=True)
+    dimPixCounter = counts[0]
+    brightPixCounter = counts[1]
 
     if include:
         return brightPixCounter, dimPixCounter, imbw 
-    return brightPixCounter, dimPixCounter, None
+    
+    return brightPixCounter, dimPixCounter, False
     
      
 # Function to print out current processed image.    
 def print_out(threshold_tuple):
     BP, DP, im = threshold_tuple
     print("Pixel ratio is: ", BP/DP)
-    if im != None:
+    if isinstance(im, np.ndarray):
         print("Number of Bright pixels: ",BP)
         print("Number of Dim Pixels: ",DP)
         print("Total number of pixels in image: ", im.size)
@@ -90,7 +90,15 @@ def print_out(threshold_tuple):
         title('Thresholded image')
         show()
 
+# Helper function to calculate bins for histogram plotting
+def feedman_bins(data):
+    q25, q75 = np.percentile(data, [25, 75])
+    bin_width = 2 * (q75 - q25) * len(data) ** (-1/3)
+    bins = round((max(data) - min(data)) / bin_width)
+    return bins
+
+# Function to plot histograms
 def create_histogram(data_tuple):
     data_br, data_m = data_tuple
-    hist(data_m[0])
-    show()
+    sns.displot(data_br[0], bins=feedman_bins(data_br[0]), kde=True)
+
