@@ -19,7 +19,7 @@ from copy import copy
 im = imread('Datasets/EuRoC/cam0/1403638127245096960.png')
 
 # Make function to iterate over the EuRoC dataset specifically.
-def load_euroc_dataset():
+def load_euroc_dataset(supress_output: bool):
     # Setup directories using os
     img_folder = 'Datasets/EuRoC/'
     cur_dir = os.getcwd()
@@ -37,7 +37,7 @@ def load_euroc_dataset():
         for file in os.listdir(os.path.join(dir, subfolder)):
             image = imread(os.path.join(dir, subfolder, file))
             counter += 1
-            if (counter % 100) == 0:
+            if ((counter % 100) == 0) & (not (supress_output)):
                 print(counter)
             # Dataset images are already gray scale by the looks of it so can run just take mean.
             mean = np.mean(image)
@@ -46,6 +46,12 @@ def load_euroc_dataset():
             data_BR[axis].append(BP/DP)
         axis += 1
     return data_BR, data_mean
+
+# Make function to process image to correct HSV / YUV color space
+def load_to_colorspace(image):
+    
+    
+    return 0
 
 # Create thresholded picture. To take either 0 or 255 in pixel value. 
 def threshold_image(image, include):
@@ -98,7 +104,7 @@ def feedman_bins(data):
     return bins
 
 # Function to plot histograms
-def create_histogram(data_tuple):
+def create_histogram_euroc(data_tuple):
     data_br, data_m = data_tuple
     f, ax = plt.subplots(2,2)
     sns.histplot(data_br[0], bins=feedman_bins(data_br[0]), kde=True, ax=ax[0,0])
@@ -111,5 +117,3 @@ def create_histogram(data_tuple):
     ax[1,1].set_title("Mean image intensity cam1")
     plt.tight_layout()
     plt.show()
-
-create_histogram(load_euroc_dataset())
