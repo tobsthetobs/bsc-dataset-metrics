@@ -97,7 +97,7 @@ def print_euroc_metrics(data_tuple, include: bool):
     print("Combined pixel ratio variance on both cams: ", var_br_comb)
     print("Combined mean image intensity of both cams: ", m_comb)
     print("Combined mean image intensity variance of both cams: ", var_m_comb)
-    print("Largest delta: ", delta)
+    print("Largest delta: (pixel ratio, mean) ", delta)
 
 # Function used to return all metrics for downloaded EuRoC dataset,
 # returns a tuple with 4 values (br_comb, var_br_comb, m_comb, var_m_comb) which corresponds to: (brightness ratio combined, brightness ratio variance, mean image intensity mean, mean image intensity variance)
@@ -162,6 +162,6 @@ def aqualoc_metrics(data_tuple, name: str, include: bool):
         print("Mean of image intensity on: ", name, m_m)
         print("Variance of pixel ratio on: ", name, br_var)
         print("Variance of image intensity on: ", name, m_var)
-        print("Largest delta of all sequences: ", delta)
+        print("Largest delta of all sequences: (pixel ratio, mean)", delta)
     
     return (br, br_var, m_m, m_var)
