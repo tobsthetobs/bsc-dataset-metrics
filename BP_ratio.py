@@ -18,7 +18,6 @@ from copy import copy
 # Read image and initialize variables
 im = imread('Datasets/EuRoC/cam0/1403638127245096960.png')
 dataset_folder = 'Datasets'
-sns.set_palette("Paired")
 
 
 

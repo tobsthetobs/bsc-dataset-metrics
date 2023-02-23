@@ -30,33 +30,35 @@ def feedman_bins(data):
 
 # Function to plot histograms for EuRoC
 def create_histogram_euroc(data_tuple):
+    sns.set_palette("pastel")
     data_br, data_m, _ = data_tuple
     f, ax = plt.subplots(2, 2)
-    sns.histplot(data_br[0], bins=feedman_bins(
-        data_br[0]), kde=True, ax=ax[0, 0])
+    sns.histplot(data_br[0], bins=feedman_bins(data_br[0]), kde=True, ax=ax[0, 0])
     ax[0, 0].set_title("pixel ratio cam0")
-    sns.histplot(data_m[0], bins=feedman_bins(
-        data_m[0]), kde=True, ax=ax[0, 1])
+    ax[0, 0].set_xlabel("Brightpixels / Dimpixels")
+    sns.histplot(data_m[0], bins=feedman_bins(data_m[0]), kde=True, ax=ax[0, 1])
     ax[0, 1].set_title("Mean image intensity cam0")
-    sns.histplot(data_br[1], bins=feedman_bins(
-        data_br[1]), kde=True, ax=ax[1, 0])
+    ax[0, 1].set_xlabel("Image mean intensity")
+    sns.histplot(data_br[1], bins=feedman_bins(data_br[1]), kde=True, ax=ax[1, 0])
     ax[1, 0].set_title("pixel ratio cam1")
-    sns.histplot(data_m[1], bins=feedman_bins(
-        data_m[1]), kde=True, ax=ax[1, 1])
+    ax[1, 0].set_xlabel("Brightpixels / Dimpixels")
+    sns.histplot(data_m[1], bins=feedman_bins(data_m[1]), kde=True, ax=ax[1, 1])
     ax[1, 1].set_title("Mean image intensity cam1")
+    ax[1, 1].set_xlabel("Image mean intensity")
     plt.tight_layout()
     plt.show()
     
 # Function to plot histograms for AQUALOC
 def create_histogram_aqualoc(data, title: str):
+    sns.set_palette("pastel")
     f, ax = plt.subplots(len(data))
     for i in range(len(data)):
         increment = i+1
         sns.histplot(data[i], bins=feedman_bins(data[i]), kde=True, ax=ax[i])
         ax[i].set_title(title + "  " +  str(increment))
-    # plt.tight_layout()
-    plt.figure().set_figheight(len(data)*30)
-    plt.figure().set_figwidth(len(data)*10)
+
+    f.set_figheight(len(data)*3)
+    plt.tight_layout()
     plt.show()
 
 # Function used for printing all metrics on downloaded EuRoC dataset
