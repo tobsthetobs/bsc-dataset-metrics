@@ -36,8 +36,10 @@ def load_euroc_dataset(supress_output: bool):
     axis = 0
     counter = 0
     sum = 0
-    delta = 0
-    prev = 0
+    delta_m = 0
+    delta_b = 0
+    prev_m = 0
+    prev_b = 0
 
     # Iterate over dataset
     for subfolder in data:
@@ -55,18 +57,22 @@ def load_euroc_dataset(supress_output: bool):
             data_mean[axis].append(mean)
             data_BR[axis].append(BP/DP)
             
-            # Extract largest change in mean intensity of image:
+            # Extract largest change in pixel ratio and mean intensity of image:
             if counter == 0:
-                prev = mean
-                delta = 0
-            if (delta < abs(mean - prev)):
-                delta = abs(mean - prev)
-                prev = mean
+                prev_m = mean
+                prev_b = BP/DP
+                delta_m = 0
+            if (delta_m < abs(mean - prev_m)):
+                delta_m = abs(mean - prev_m)
+                prev_m = mean
+            if (delta_b < abs(BP/DP - prev_b)):
+                delta_b = abs(BP/DP - prev_b)
+                prev_b = BP/DP
         sum += counter
         print("Scanning next folder current total of images processed: ", sum)
         counter = 0 
         axis += 1
-    return data_BR, data_mean, delta
+    return data_BR, data_mean, (delta_b, delta_m)
 
 # Function to iterate over the AQUALOC dataset specifically, photos are already in gray scale.
 # Function calculates mean image intensity, doesnt caclulate values from binary image.
@@ -81,9 +87,11 @@ def load_aqualoc_dataset(supress_output: bool):
     data_mean = []
     data_BR = []
     counter = 0
-    delta = 0
     sum = 0
-    prev = 0
+    delta_m = 0
+    delta_b = 0
+    prev_m = 0
+    prev_b = 0
     
     # Iterate over dataset
     for subfolder in data:
@@ -111,19 +119,23 @@ def load_aqualoc_dataset(supress_output: bool):
                 mean = np.mean(image)
                 mean_sequence.append(mean)
                 
-            # Extract largest change in mean intensity of image:
+            # Extract largest change in pixel ratio and mean intensity of image:
             if counter == 0:
-                prev = mean
-                delta = 0
-            if (delta < abs(mean - prev)):
-                delta = abs(mean - prev)
-                prev = mean  
+                prev_m = mean
+                prev_b = BP/DP
+                delta_m = 0
+            if (delta_m < abs(mean - prev_m)):
+                delta_m = abs(mean - prev_m)
+                prev_m = mean
+            if (delta_b < abs(BP/DP - prev_b)):
+                delta_b = abs(BP/DP - prev_b)
+                prev_b = BP/DP  
         data_BR.append(BR_sequence)
         data_mean.append(mean_sequence)
         sum += counter
         print("Scanning next folder current total of images processed: ", sum)
         counter = 0
-    return data_BR, data_mean, delta
+    return data_BR, data_mean, (delta_b, delta_m)
 
 
 

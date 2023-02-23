@@ -127,3 +127,41 @@ def euroc_metrics(data_tuple, include: bool):
         vars = [br0_var, br1_var, m0_var, m1_var]
         return (br_comb, var_br_comb, m_comb, var_m_comb), means, vars
     return (br_comb, var_br_comb, m_comb, var_m_comb, delta)
+
+# Function used for printing all metrics on downloaded AQUALOC dataset
+def aqualoc_metrics(data_tuple, name: str, include: bool):
+    data_br, data_m, delta = data_tuple
+    
+    # Calculate metrics
+    br = 0
+    placeholder = []
+    for i in range(len(data_br)):
+        placeholder.append(np.mean(data_br[i]))
+    br = np.mean(placeholder)
+    
+    br_var = 0
+    placeholder.clear()
+    for i in range(len(data_m)):
+        placeholder.append(np.var(data_br[i]))
+    br_var = np.mean(placeholder)
+    
+    m_m = 0
+    placeholder.clear()
+    for i in range(len(data_m)):
+        placeholder.append(np.mean(data_m[i]))
+    m_m = np.mean(placeholder)
+    
+    m_var = 0
+    placeholder.clear()
+    for i in range(len(data_m)):
+        placeholder.append(np.var(data_m[i]))
+    m_var = np.mean(placeholder)
+    
+    if include:
+        print("Mean of pixel ratio on: ", name, br) 
+        print("Mean of image intensity on: ", name, m_m)
+        print("Variance of pixel ratio on: ", name, br_var)
+        print("Variance of image intensity on: ", name, m_var)
+        print("Largest delta of all sequences: ", delta)
+    
+    return (br, br_var, m_m, m_var)
