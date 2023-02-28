@@ -76,7 +76,7 @@ def load_euroc_dataset(supress_output: bool):
 
 # Function to iterate over the AQUALOC dataset specifically, photos are already in gray scale.
 # Function calculates mean image intensity, doesnt caclulate values from binary image.
-def load_aqualoc_dataset(supress_output: bool):
+def load_aqualoc_dataset(supress_output: bool, COLORSPACE: str):
     # Setup directories using os 
     img_folder = 'AQUALOC/'
     cur_dir = os.getcwd()
@@ -106,12 +106,12 @@ def load_aqualoc_dataset(supress_output: bool):
             if ((counter % 100) == 0) & (not (supress_output)):
                 print(counter)
             
-            # Check number of image channels, convert to HSV if not a grayscale image then calculate mean intensity and binary image ratio.
+            # Check number of image channels, convert to given colorspace if not already a grayscale image then calculate mean intensity and binary image ratio.
             if check_image_dim(image):
-                BP, DP, _ = colorspace_threshold_image(image, "HSV", False)
+                BP, DP, _ = threshold_image(image, False)
                 BR_sequence.append(BP/DP)
-                im_hsv = load_to_colorspace(image, "HSV")
-                mean = np.mean(im_hsv)
+                im_CS = load_to_colorspace(image, COLORSPACE)
+                mean = np.mean(im_CS)
                 mean_sequence.append(mean)
             else:
                 BP, DP, _ = threshold_image(image, False)
@@ -137,12 +137,14 @@ def load_aqualoc_dataset(supress_output: bool):
         counter = 0
     return data_BR, data_mean, (delta_b, delta_m)
 
-
+# Function to load and process AURORA datset from folder where raw images are extracted.
+def load_aurora_dataset(supress_output: bool):
+    return 0
 
 ## Section for algorithmic functions
 # Make function to process image to correct HSV / YUV color space
 def load_to_colorspace(image, COLORSPACE: str):
-    assert COLORSPACE == 'HSV' or COLORSPACE == 'YUV', f'ERROR: Wrong COLORSPACE name selected. COLORSPACE should be one of "HSV", "YUV"'
+    assert COLORSPACE == 'HSV' or COLORSPACE == 'YUV' or COLORSPACE == 'GRAY', f'ERROR: Wrong COLORSPACE name selected. COLORSPACE should be one of "HSV", "YUV" or "GRAY"'
     if COLORSPACE == 'HSV':
         img = cv2.cvtColor(image, cv2.COLOR_RGB2HSV_FULL)
         # Return only value channel
@@ -151,6 +153,9 @@ def load_to_colorspace(image, COLORSPACE: str):
         img = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
         # Return only luminace channel
         return img[:,:,0]
+    elif COLORSPACE == 'GRAY':
+        return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        
 
 # Create thresholded picture. To take either 0 or 255 in pixel value.
 def threshold_image(image, include: bool):
@@ -162,29 +167,6 @@ def threshold_image(image, include: bool):
         imgs = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     else:
         imgs = image
-
-    imbw = imgs > imgs.mean()
-    imbw = img_as_ubyte(imbw)
-
-    # Flatten image
-    imbw_flt = copy(imbw)
-    imbw_flt.flatten()
-    _, counts = np.unique(imbw_flt, return_counts=True)
-    dimPixCounter = counts[0]
-    brightPixCounter = counts[1]
-
-    if include:
-        return brightPixCounter, dimPixCounter, imbw
-
-    return brightPixCounter, dimPixCounter, False
-
-
-def colorspace_threshold_image(image, COLORSPACE: str, include: bool):
-    # Initialize locals:
-    brightPixCounter = 0
-    dimPixCounter = 0
-    
-    imgs = load_to_colorspace(image, COLORSPACE)
 
     imbw = imgs > imgs.mean()
     imbw = img_as_ubyte(imbw)
