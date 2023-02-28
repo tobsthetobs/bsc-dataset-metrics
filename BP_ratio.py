@@ -145,17 +145,19 @@ def load_aurora_dataset(supress_output: bool):
 # Make function to process image to correct HSV / YUV color space
 def load_to_colorspace(image, COLORSPACE: str):
     assert COLORSPACE == 'HSV' or COLORSPACE == 'YUV' or COLORSPACE == 'GRAY', f'ERROR: Wrong COLORSPACE name selected. COLORSPACE should be one of "HSV", "YUV" or "GRAY"'
-    if COLORSPACE == 'HSV':
-        img = cv2.cvtColor(image, cv2.COLOR_RGB2HSV_FULL)
-        # Return only value channel
-        return img[:,:,2]
-    elif COLORSPACE == 'YUV':
-        img = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
-        # Return only luminace channel
-        return img[:,:,0]
-    elif COLORSPACE == 'GRAY':
-        return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        
+    if check_image_dim(image):
+        if COLORSPACE == 'HSV':
+            img = cv2.cvtColor(image, cv2.COLOR_RGB2HSV_FULL)
+            # Return only value channel
+            return img[:,:,2]
+        elif COLORSPACE == 'YUV':
+            img = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
+            # Return only luminace channel
+            return img[:,:,0]
+        elif COLORSPACE == 'GRAY':
+            return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    else:
+        return image
 
 # Create thresholded picture. To take either 0 or 255 in pixel value.
 def threshold_image(image, include: bool):
