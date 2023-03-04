@@ -29,7 +29,7 @@ def feedman_bins(data):
     return bins
 
 # Function to plot histograms for EuRoC
-def create_histogram_euroc(data_tuple):
+def create_b_histogram_euroc(data_tuple):
     sns.set_palette("pastel")
     data_br, data_m, _ = data_tuple
     f, ax = plt.subplots(2, 2)
@@ -49,7 +49,7 @@ def create_histogram_euroc(data_tuple):
     plt.show()
     
 # Function to plot histograms for AQUALOC
-def create_histogram_aqualoc(data, title: str):
+def create_b_histogram_aqualoc(data, title: str):
     sns.set_palette("pastel")
     f, ax = plt.subplots(len(data))
     for i in range(len(data)):
@@ -62,7 +62,7 @@ def create_histogram_aqualoc(data, title: str):
     plt.show()
 
 # Function used for printing all metrics on downloaded EuRoC dataset
-def print_euroc_metrics(data_tuple, include: bool):
+def print_euroc_b_metrics(data_tuple, include: bool):
     data_br, data_m, delta = data_tuple
     
     # Calculate metrics
@@ -102,7 +102,7 @@ def print_euroc_metrics(data_tuple, include: bool):
 # Function used to return all metrics for downloaded EuRoC dataset,
 # returns a tuple with 4 values (br_comb, var_br_comb, m_comb, var_m_comb) which corresponds to: (brightness ratio combined, brightness ratio variance, mean image intensity mean, mean image intensity variance)
 # if include is passed as True function will then pass 2 arrays containing the metrics for each cam.
-def euroc_metrics(data_tuple, include: bool):
+def euroc_b_metrics(data_tuple, include: bool):
     data_br, data_m, delta = data_tuple
     
     # Calculate metrics
@@ -129,7 +129,7 @@ def euroc_metrics(data_tuple, include: bool):
     return (br_comb, var_br_comb, m_comb, var_m_comb, delta)
 
 # Function used for printing all metrics on downloaded AQUALOC dataset
-def aqualoc_metrics(data_tuple, name: str, include: bool):
+def aqualoc_b_metrics(data_tuple, name: str, include: bool):
     data_br, data_m, delta = data_tuple
     
     # Calculate metrics
@@ -165,3 +165,22 @@ def aqualoc_metrics(data_tuple, name: str, include: bool):
         print("Largest delta of all sequences: (pixel ratio, mean)", delta)
     
     return (br, br_var, m_m, m_var)
+
+
+## Section for motion blur plotting functions
+# Function for EuRoC
+# Function to plot histograms for AQUALOC
+def create_mb_boxplot(data, title: str):
+    sns.set_palette("pastel")
+    f, ax = plt.subplots(len(data))
+    for i in range(len(data)):
+        increment = i+1
+        sns.boxplot(data[i], ax=ax[i])
+        ax[i].set_title(title + "  " +  str(increment))
+
+    f.set_figheight(len(data)*3)
+    plt.tight_layout()
+    plt.show()
+    
+def print_mb_metrics(data):
+    return 0

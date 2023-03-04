@@ -28,10 +28,12 @@ def load_aqualoc_dataset():
     
     # Iterate over folders
     for subfolder in data: 
+        placeholder = []
         for file in os.listdir(os.path.join(dir,subfolder)):
-            res.append(motion_blur_laplacian(bp.load_to_colorspace(imread(os.path.join(dir, subfolder, file)), "GRAY")))
+            placeholder.append(motion_blur_laplacian(bp.load_to_colorspace(imread(os.path.join(dir, subfolder, file)), "GRAY")))
             counter += 1
         sum += counter
+        res.append(placeholder)
         print("Scanning next folder current total of images processed: ", sum)
         counter = 0
         
@@ -52,10 +54,12 @@ def load_euroc_dataset():
     
     # Iterate over folders
     for subfolder in data: 
+        placeholder = []
         for file in os.listdir(os.path.join(dir,subfolder)):
-            res.append(motion_blur_laplacian(bp.load_to_colorspace(imread(os.path.join(dir, subfolder, file)), "GRAY")))
+            placeholder.append(motion_blur_laplacian(bp.load_to_colorspace(imread(os.path.join(dir, subfolder, file)), "GRAY")))
             counter += 1
         sum += counter
+        res.append(placeholder)
         print("Scanning next folder current total of images processed: ", sum)
         counter = 0
         
