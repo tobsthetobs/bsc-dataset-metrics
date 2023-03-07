@@ -139,7 +139,7 @@ def load_aqualoc_dataset(supress_output: bool, COLORSPACE: str):
 
 # Function to load and process AURORA datset
 # Function calculates mean image intensity, doesnt caclulate values from binary image.
-def load_aurora_dataset(supress_output: bool, COLORSPACE: str):
+def load_aurora_dataset(supress_output: bool, COLORSPACE: str, **kwargs):
     # Setup directories using os 
     img_folder = 'AURORA/imgs/'
     cur_dir = os.getcwd()
@@ -147,6 +147,10 @@ def load_aurora_dataset(supress_output: bool, COLORSPACE: str):
     data = os.listdir(dir)
     
     # Setup lists to store data
+    for k,v in kwargs.iteritems():
+        if k == "stop":
+            stop = v
+    
     data_mean = []
     data_BR = []
     counter = 0
@@ -192,7 +196,12 @@ def load_aurora_dataset(supress_output: bool, COLORSPACE: str):
                 prev_m = mean
             if (delta_b < abs(BP/DP - prev_b)):
                 delta_b = abs(BP/DP - prev_b)
-                prev_b = BP/DP  
+                prev_b = BP/DP
+                
+            if counter == stop:
+                data_BR.append(BR_sequence) 
+                data_mean.append(mean_sequence)
+                return data_BR, data_mean, (delta_b, delta_m)
         data_BR.append(BR_sequence)
         data_mean.append(mean_sequence)
         sum += counter
