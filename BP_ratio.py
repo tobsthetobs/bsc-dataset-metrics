@@ -147,7 +147,7 @@ def load_aurora_dataset(supress_output: bool, COLORSPACE: str, **kwargs):
     data = os.listdir(dir)
     
     # Setup lists to store data
-    for k,v in kwargs.iteritems():
+    for k,v in kwargs.items():
         if k == "stop":
             stop = v
     
