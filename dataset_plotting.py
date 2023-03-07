@@ -25,7 +25,7 @@ def print_out(threshold_tuple):
 def feedman_bins(data):
     q25, q75 = np.percentile(data, [25, 75])
     bin_width = 2 * (q75 - q25) * len(data) ** (-1/3)
-    bins = round((max(data) - min(data)) / bin_width)
+    bins = round((np.max(data) - np.min(data)) / bin_width)
     return bins
 
 # Function to plot histograms for EuRoC
@@ -58,6 +58,14 @@ def create_b_histogram_aqualoc(data, title: str):
         ax[i].set_title(title + "  " +  str(increment))
 
     f.set_figheight(len(data)*3)
+    plt.tight_layout()
+    plt.show()
+
+# Function to plot AURORA
+def create_b_histogram_aurora(data):
+    data = data[0]
+    sns.set_palette("pastel")
+    sns.histplot(data, bins=feedman_bins(data), kde=True)
     plt.tight_layout()
     plt.show()
 

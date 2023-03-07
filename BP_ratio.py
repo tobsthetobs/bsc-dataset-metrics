@@ -52,7 +52,7 @@ def load_euroc_dataset(supress_output: bool):
                 print(counter)
                 
             # Dataset images are already gray scale by the looks of it so can run just take mean.
-            mean = np.mean(image)
+            mean = np.mean(img_as_float(image))
             BP, DP, _ = threshold_image(image, False)
             data_mean[axis].append(mean)
             data_BR[axis].append(BP/DP)
@@ -111,12 +111,12 @@ def load_aqualoc_dataset(supress_output: bool, COLORSPACE: str):
                 BP, DP, _ = threshold_image(image, False)
                 BR_sequence.append(BP/DP)
                 im_CS = load_to_colorspace(image, COLORSPACE)
-                mean = np.mean(im_CS)
+                mean = np.mean(img_as_float(im_CS))
                 mean_sequence.append(mean)
             else:
                 BP, DP, _ = threshold_image(image, False)
                 BR_sequence.append(BP/DP)
-                mean = np.mean(image)
+                mean = np.mean(img_as_float(image))
                 mean_sequence.append(mean)
                 
             # Extract largest change in pixel ratio and mean intensity of image:
@@ -137,9 +137,68 @@ def load_aqualoc_dataset(supress_output: bool, COLORSPACE: str):
         counter = 0
     return data_BR, data_mean, (delta_b, delta_m)
 
-# Function to load and process AURORA datset from folder where raw images are extracted.
-def load_aurora_dataset(supress_output: bool):
-    return 0
+# Function to load and process AURORA datset
+# Function calculates mean image intensity, doesnt caclulate values from binary image.
+def load_aurora_dataset(supress_output: bool, COLORSPACE: str):
+    # Setup directories using os 
+    img_folder = 'AURORA/imgs/'
+    cur_dir = os.getcwd()
+    dir = cur_dir + "/" + dataset_folder + "/" + img_folder
+    data = os.listdir(dir)
+    
+    # Setup lists to store data
+    data_mean = []
+    data_BR = []
+    counter = 0
+    sum = 0
+    delta_m = 0
+    delta_b = 0
+    prev_m = 0
+    prev_b = 0
+    
+    # Iterate over dataset
+    for subfolder in data:
+        mean_sequence = []
+        BR_sequence = []
+        for file in os.listdir(os.path.join(dir,subfolder)):
+            image = imread(os.path.join(dir, subfolder, file))
+            counter += 1
+            mean = 0
+            
+            # This is here for debugging
+            if ((counter % 100) == 0) & (not (supress_output)):
+                print(counter)
+            
+            # Check number of image channels, convert to given colorspace if not already a grayscale image then calculate mean intensity and binary image ratio.
+            if check_image_dim(image):
+                BP, DP, _ = threshold_image(image, False)
+                BR_sequence.append(BP/DP)
+                im_CS = load_to_colorspace(image, COLORSPACE)
+                mean = np.mean(img_as_float(im_CS))
+                mean_sequence.append(mean)
+            else:
+                BP, DP, _ = threshold_image(image, False)
+                BR_sequence.append(BP/DP)
+                mean = np.mean(img_as_float(image))
+                mean_sequence.append(mean)
+                
+            # Extract largest change in pixel ratio and mean intensity of image:
+            if counter == 0:
+                prev_m = mean
+                prev_b = BP/DP
+                delta_m = 0
+            if (delta_m < abs(mean - prev_m)):
+                delta_m = abs(mean - prev_m)
+                prev_m = mean
+            if (delta_b < abs(BP/DP - prev_b)):
+                delta_b = abs(BP/DP - prev_b)
+                prev_b = BP/DP  
+        data_BR.append(BR_sequence)
+        data_mean.append(mean_sequence)
+        sum += counter
+        print("Scanning next folder current total of images processed: ", sum)
+        counter = 0
+    return data_BR, data_mean, (delta_b, delta_m)
 
 ## Section for algorithmic functions
 # Make function to process image to correct HSV / YUV color space
@@ -155,7 +214,7 @@ def load_to_colorspace(image, COLORSPACE: str):
             # Return only luminace channel
             return img[:,:,0]
         elif COLORSPACE == 'GRAY':
-            return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     else:
         return image
 
