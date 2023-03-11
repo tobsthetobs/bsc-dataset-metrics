@@ -16,7 +16,6 @@ from copy import copy
 
 
 # Read image and initialize variables
-im = imread('Datasets/EuRoC/cam0/1403638127245096960.png')
 dataset_folder = 'Datasets'
 
 
@@ -26,7 +25,7 @@ dataset_folder = 'Datasets'
 def load_euroc_dataset(supress_output: bool):
     # Setup directories using os
     img_folder = 'EuRoC/'
-    cur_dir = os.getcwd()
+    cur_dir = os.path.normpath(os.getcwd() + os.sep + os.pardir)
     dir = cur_dir + "/" + dataset_folder + "/" + img_folder
     data = os.listdir(dir)
 
@@ -79,7 +78,7 @@ def load_euroc_dataset(supress_output: bool):
 def load_aqualoc_dataset(supress_output: bool, COLORSPACE: str):
     # Setup directories using os 
     img_folder = 'AQUALOC/'
-    cur_dir = os.getcwd()
+    cur_dir = os.path.normpath(os.getcwd() + os.sep + os.pardir)
     dir = cur_dir + "/" + dataset_folder + "/" + img_folder
     data = os.listdir(dir)
     
@@ -142,7 +141,7 @@ def load_aqualoc_dataset(supress_output: bool, COLORSPACE: str):
 def load_aurora_dataset(supress_output: bool, COLORSPACE: str, **kwargs):
     # Setup directories using os 
     img_folder = 'AURORA/imgs/'
-    cur_dir = os.getcwd()
+    cur_dir = os.path.normpath(os.getcwd() + os.sep + os.pardir)
     dir = cur_dir + "/" + dataset_folder + "/" + img_folder
     data = os.listdir(dir)
     

@@ -17,7 +17,7 @@ def motion_blur_laplacian(image):
 def load_aqualoc_dataset():
     # Setup directories using os 
     img_folder = 'AQUALOC/'
-    cur_dir = os.getcwd()
+    cur_dir = os.path.normpath(os.getcwd() + os.sep + os.pardir)
     dir = cur_dir + "/" + dataset_folder + "/" + img_folder
     data = os.listdir(dir)
     
@@ -43,7 +43,7 @@ def load_aqualoc_dataset():
 def load_euroc_dataset():
     # Setup directories using os 
     img_folder = 'EuRoC/'
-    cur_dir = os.getcwd()
+    cur_dir = os.path.normpath(os.getcwd() + os.sep + os.pardir)
     dir = cur_dir + "/" + dataset_folder + "/" + img_folder
     data = os.listdir(dir)
     
