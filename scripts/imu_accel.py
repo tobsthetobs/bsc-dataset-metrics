@@ -1,5 +1,6 @@
 import pandas as pd 
 import tkinter as tk
+import numpy as np
 from tkinter import filedialog
 
 
@@ -16,3 +17,32 @@ def select_dir():
     root.withdraw()
     dir_path = filedialog.askdirectory()
     return dir_path
+
+# pass a csv on function call or omit to select using explorer
+def create_aqualoc_imu_dataframe(**kwargs):
+    title = ""
+    select = True
+    for k,v in kwargs.items():
+        if k == "csv":
+            df = pd.read_csv(v)
+            df = df.iloc[:,4:7]
+            select = False
+        if k == "title":
+            title = v
+    if select:
+        csv = select_file()
+        df = pd.read_csv(csv)
+        df = df.iloc[:,4:7]
+
+    # make data list
+    data = []
+    data.append(df.diff().max())
+    data.append(df.mean())
+    data.append(df.var())
+    df = pd.DataFrame(data,index=['Largest difference', 'Mean', 'Var'])
+    styles = [dict(selector="caption", props=[("text-align", "center"), ("font-size", "150%")])]
+    df = df.style.set_caption(title).set_table_styles(styles)
+    return df
+
+    
+    
