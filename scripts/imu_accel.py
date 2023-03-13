@@ -39,10 +39,11 @@ def create_aqualoc_imu_dataframe(**kwargs):
     data.append(df.diff().max())
     data.append(df.mean())
     data.append(df.var())
-    df = pd.DataFrame(data,index=['Largest difference', 'Mean', 'Var'])
+    df_res = pd.DataFrame(data,index=['Largest difference', 'Mean', 'Var'])
     styles = [dict(selector="caption", props=[("text-align", "center"), ("font-size", "150%")])]
-    df = df.style.set_caption(title).set_table_styles(styles)
-    return df
+    df_res = df_res.style.set_caption(title).set_table_styles(styles)
+    df.plot(kind='line', title=title)
+    return df_res
 
     
     
