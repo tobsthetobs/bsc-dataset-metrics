@@ -30,48 +30,55 @@ def load_euroc_dataset(supress_output: bool):
     data = os.listdir(dir)
 
     # Setup empty lists to store data
-    data_mean = [[], []]
-    data_BR = [[], []]
-    axis = 0
     counter = 0
     sum = 0
     delta_m = 0
     delta_b = 0
     prev_m = 0
     prev_b = 0
+    res_BR = []
+    res_mean = []
+    res_delta = []
 
     # Iterate over dataset
-    for subfolder in data:
-        for file in os.listdir(os.path.join(dir, subfolder)):
-            image = imread(os.path.join(dir, subfolder, file))
-            counter += 1
+    for sequencefolder in data:
+        data_mean = [[], []]
+        data_BR = [[], []]
+        axis = 0
+        for subfolder in os.listdir(os.path.join(dir, sequencefolder)):
+            for file in os.listdir(os.path.join(dir, sequencefolder, subfolder)):
+                image = imread(os.path.join(dir, sequencefolder, subfolder, file))
+                counter += 1
             
-            # This is here for debugging
-            if ((counter % 100) == 0) & (not (supress_output)):
-                print(counter)
+                # This is here for debugging
+                if ((counter % 100) == 0) & (not (supress_output)):
+                    print(counter)
                 
-            # Dataset images are already gray scale by the looks of it so can run just take mean.
-            mean = np.mean(img_as_float(image))
-            BP, DP, _ = threshold_image(image, False)
-            data_mean[axis].append(mean)
-            data_BR[axis].append(BP/DP)
+                # Dataset images are already gray scale by the looks of it so can run just take mean.
+                mean = np.mean(img_as_float(image))
+                BP, DP, _ = threshold_image(image, False)
+                data_mean[axis].append(mean)
+                data_BR[axis].append(BP/DP)
             
-            # Extract largest change in pixel ratio and mean intensity of image:
-            if counter == 0:
-                prev_m = mean
-                prev_b = BP/DP
-                delta_m = 0
-            if (delta_m < abs(mean - prev_m)):
-                delta_m = abs(mean - prev_m)
-                prev_m = mean
-            if (delta_b < abs(BP/DP - prev_b)):
-                delta_b = abs(BP/DP - prev_b)
-                prev_b = BP/DP
-        sum += counter
-        print("Scanning next folder current total of images processed: ", sum)
-        counter = 0 
-        axis += 1
-    return data_BR, data_mean, (delta_b, delta_m)
+                # Extract largest change in pixel ratio and mean intensity of image:
+                if counter == 0:
+                    prev_m = mean
+                    prev_b = BP/DP
+                    delta_m = 0
+                if (delta_m < abs(mean - prev_m)):
+                    delta_m = abs(mean - prev_m)
+                    prev_m = mean
+                if (delta_b < abs(BP/DP - prev_b)):
+                    delta_b = abs(BP/DP - prev_b)
+                    prev_b = BP/DP
+            sum += counter
+            print("Scanning next folder current total of images processed: ", sum)
+            counter = 0 
+            axis += 1
+        res_BR.append(data_BR)
+        res_mean.append(data_mean)
+        res_delta.append([delta_b, delta_m])
+    return res_BR, res_mean, res_delta
 
 # Function to iterate over the AQUALOC dataset specifically, photos are already in gray scale.
 # Function calculates mean image intensity, doesnt caclulate values from binary image.

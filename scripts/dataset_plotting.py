@@ -28,10 +28,12 @@ def feedman_bins(data):
     bins = round((np.max(data) - np.min(data)) / bin_width)
     return bins
 
-# Function to plot histograms for EuRoC
-def create_b_histogram_euroc(data_tuple):
+# Function to plot histograms for EuRoC on a single sequence
+def create_b_histogram_euroc(data_tuple, number):
     sns.set_palette("pastel")
-    data_br, data_m, _ = data_tuple
+    data_unpack_br, data_unpack_m, _ = data_tuple
+    data_br = data_unpack_br[number]
+    data_m = data_unpack_m[number]
     f, ax = plt.subplots(2, 2)
     sns.histplot(data_br[0], bins=feedman_bins(data_br[0]), kde=True, ax=ax[0, 0])
     ax[0, 0].set_title("pixel ratio cam0")
@@ -70,8 +72,11 @@ def create_b_histogram_aurora(data):
     plt.show()
 
 # Function used for printing all metrics on downloaded EuRoC dataset
-def print_euroc_b_metrics(data_tuple, include: bool):
-    data_br, data_m, delta = data_tuple
+def print_euroc_b_metrics(data_tuple, number, include: bool):
+    data_unpack_br, data_unpack_m, delta_unpack = data_tuple
+    data_br = data_unpack_br[number]
+    data_m = data_unpack_m[number]
+    delta = delta_unpack[number]
     
     # Calculate metrics
     br0 = np.mean(data_br[0])
@@ -110,8 +115,11 @@ def print_euroc_b_metrics(data_tuple, include: bool):
 # Function used to return all metrics for downloaded EuRoC dataset,
 # returns a tuple with 4 values (br_comb, var_br_comb, m_comb, var_m_comb) which corresponds to: (brightness ratio combined, brightness ratio variance, mean image intensity mean, mean image intensity variance)
 # if include is passed as True function will then pass 2 arrays containing the metrics for each cam.
-def euroc_b_metrics(data_tuple, include: bool):
-    data_br, data_m, delta = data_tuple
+def euroc_b_metrics(data_tuple, number, include: bool):
+    data_unpack_br, data_unpack_m, delta_unpack = data_tuple
+    data_br = data_unpack_br[number]
+    data_m = data_unpack_m[number]
+    delta = delta_unpack[number]
     
     # Calculate metrics
     br0 = np.mean(data_br[0])
@@ -189,6 +197,18 @@ def create_mb_boxplot(data, title: str):
     f.set_figheight(len(data)*3)
     plt.tight_layout()
     plt.show()
-    
+ 
+def create_mb_histplot(data, title: str):
+    sns.set_palette("pastel")
+    f, ax = plt.subplots(len(data))
+    for i in range(len(data)):
+        increment = i+1
+        sns.histplot(data[i],bins = feedman_bins(data[i]) ax=ax[i])
+        ax[i].set_title(title + "  " +  str(increment))
+
+    f.set_figheight(len(data)*3)
+    plt.tight_layout()
+    plt.show()
+
 def print_mb_metrics(data):
     return 0

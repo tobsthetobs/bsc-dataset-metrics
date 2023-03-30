@@ -65,16 +65,18 @@ def load_euroc_dataset(select: bool):
     sum =  0
     
     # Iterate over folders
-    for subfolder in data: 
-        placeholder = []
-        for file in os.listdir(os.path.join(dir,subfolder)):
-            placeholder.append(motion_blur_laplacian(bp.load_to_colorspace(imread(os.path.join(dir, subfolder, file)), "GRAY")))
-            counter += 1
-        sum += counter
-        res.append(placeholder)
-        print("Scanning next folder current total of images processed: ", sum)
-        counter = 0
-        
+    for sequencefolder in data:
+        sequence = []
+        for subfolder in os.listdir(os.path.join(dir, sequencefolder)): 
+            placeholder = []
+            for file in os.listdir(os.path.join(dir, sequencefolder, subfolder)):
+                placeholder.append(motion_blur_laplacian(bp.load_to_colorspace(imread(os.path.join(dir,sequencefolder, subfolder, file)), "GRAY")))
+                counter += 1
+            sum += counter
+            sequence.append(placeholder)
+            print("Scanning next folder current total of images processed: ", sum)
+            counter = 0
+        res.append(sequence)
     return res
 
 
