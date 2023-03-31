@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pylab import *
 from matplotlib.pyplot import imshow
+import entropy as en
 
 
 ## Section for utility functions for such as printing information etc.
@@ -203,7 +204,7 @@ def create_mb_histplot(data, title: str):
     f, ax = plt.subplots(len(data))
     for i in range(len(data)):
         increment = i+1
-        sns.histplot(data[i],bins = feedman_bins(data[i]) ax=ax[i])
+        sns.histplot(data[i],bins = feedman_bins(data[i]), ax=ax[i])
         ax[i].set_title(title + "  " +  str(increment))
 
     f.set_figheight(len(data)*3)
@@ -212,3 +213,43 @@ def create_mb_histplot(data, title: str):
 
 def print_mb_metrics(data):
     return 0
+
+
+## Section for printing entropy of sequences
+# EuRoC
+def print_euroc_entropy(data):
+    count = 1
+    count2 = 1
+    switch1 = False
+    switch2 = False
+    curmax = 0
+    prev = 0
+    index = 0
+    for i in data:
+        if not switch1 and not switch2:
+            print("Machine Hall:", count)
+        if switch1 and not switch2:
+            print("Vicon Room 1: ", count2)
+            count2 += 1
+        if switch1 and switch2:
+            print("Vicon Room 2: ", count2)
+            count2 += 1
+        for j in i:
+            cur = en.calculate_shannon_entropy(j)
+            print("Entropy of sequence: ", cur)
+            curmax = max(curmax, cur)
+            if curmax != prev: 
+                if not switch1 and not switch1:
+                    index = count
+                if switch1 and not switch2:
+                    index = count2
+                if switch1 and switch2:
+                    index = count2
+            prev = curmax
+        count += 1
+        if count == 6: 
+            switch1 = True
+        if count == 9:
+            switch2 = True
+            count2 = 1
+    print("Maximum entropy on sequence: ", index, " with the value: ", curmax) 
