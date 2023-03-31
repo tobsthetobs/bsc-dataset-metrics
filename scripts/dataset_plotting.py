@@ -223,8 +223,11 @@ def print_euroc_entropy(data):
     switch1 = False
     switch2 = False
     curmax = 0
-    prev = 0
+    curmin = 999999
+    prevmax = 0
+    prevmin = 0
     index = 0
+    index2 = 0
     for i in data:
         if not switch1 and not switch2:
             print("Machine Hall:", count)
@@ -238,18 +241,18 @@ def print_euroc_entropy(data):
             cur = en.calculate_shannon_entropy(j)
             print("Entropy of sequence: ", cur)
             curmax = max(curmax, cur)
-            if curmax != prev: 
-                if not switch1 and not switch1:
-                    index = count
-                if switch1 and not switch2:
-                    index = count2
-                if switch1 and switch2:
-                    index = count2
-            prev = curmax
+            curmin = min(curmin, cur)
+            if curmax != prevmax: 
+                index = count
+            if curmin != prevmin: 
+                index2 = count
+            prevmax = curmax
+            prevmin = curmin
         count += 1
         if count == 6: 
             switch1 = True
         if count == 9:
             switch2 = True
             count2 = 1
-    print("Maximum entropy on sequence: ", index, " with the value: ", curmax) 
+    print("Maximum entropy on sequence: ", index, " with the value: ", curmax)
+    print("Minimum entropy on sequence: ", index2, " with the value: ", curmin) 
