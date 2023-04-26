@@ -79,4 +79,32 @@ def load_euroc_dataset(select: bool):
         res.append(sequence)
     return res
 
+def load_aurora_dataset(supress_output: bool):
+    # Setup directories using os 
+    img_folder = 'AURORA/imgs/'
+    cur_dir = os.path.normpath(os.getcwd() + os.sep + os.pardir)
+    dir = cur_dir + "/" + dataset_folder + "/" + img_folder
+    data = os.listdir(dir)
+    
+    # Setup lists and variables
+    res = []
+    counter = 0
+    sum = 0
+    
+    # Iterate over folders
+    for subfolder in data: 
+        placeholder = []
+        for file in os.listdir(os.path.join(dir,subfolder)):
+            placeholder.append(motion_blur_laplacian(bp.load_to_colorspace(imread(os.path.join(dir, subfolder, file)), "GRAY")))
+            counter += 1
+            if ((counter % 2500) == 0) & (not (supress_output)):
+                print("Current count of images processed: ", counter)
+        sum += counter
+        res.append(placeholder)
+        print("Scanning next folder current total of images processed: ", sum)
+        counter = 0
+        
+    return res
+
+
 

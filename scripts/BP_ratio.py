@@ -204,7 +204,7 @@ def load_aurora_dataset(supress_output: bool, COLORSPACE: str, **kwargs):
                 delta_b = abs(BP/DP - prev_b)
                 prev_b = BP/DP
                 
-            if counter == stop:
+            if counter == stop and stop != None:
                 data_BR.append(BR_sequence) 
                 data_mean.append(mean_sequence)
                 return data_BR, data_mean, (delta_b, delta_m)

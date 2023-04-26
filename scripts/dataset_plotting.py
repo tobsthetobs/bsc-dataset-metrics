@@ -55,10 +55,16 @@ def create_b_histogram_euroc(data_tuple, number):
 def create_b_histogram_aqualoc(data, title: str):
     sns.set_palette("pastel")
     f, ax = plt.subplots(len(data))
+    count = 1
     for i in range(len(data)):
         increment = i+1
         sns.histplot(data[i], bins=feedman_bins(data[i]), kde=True, ax=ax[i])
-        ax[i].set_title(title + "  " +  str(increment))
+        if increment <= 10:
+            s = "Archaeological site sequences: " + str(increment) + " " + title
+        else:
+            s = "Harbor site sequences: " + str(count) + " " + title
+            count += 1
+        ax[i].set_title(s)
 
     f.set_figheight(len(data)*3)
     plt.tight_layout()
@@ -256,3 +262,156 @@ def print_euroc_entropy(data):
             count2 = 1
     print("Maximum entropy on sequence: ", index, " with the value: ", curmax)
     print("Minimum entropy on sequence: ", index2, " with the value: ", curmin) 
+
+# AQUALOC
+def print_aqualoc_entropy(data):
+    data_m, data_br, _ = data
+    count = 1
+    count2 = 1
+    switch1 = True
+    curmax = 0
+    curmin = 999999
+    prevmax = 0
+    prevmin = 0
+    index = 0
+    index2 = 0
+    for i in data_br:
+        if switch1:
+            print("Archelogical site sequence:", count)
+        else:
+            print("Harbor site sequence: ", count2)
+            count2 += 1
+        cur = en.calculate_shannon_entropy(i)
+        print("Entropy of sequence: ", cur)
+        curmax = max(curmax, cur)
+        curmin = min(curmin, cur)
+        if curmax != prevmax: 
+            index = count
+        if curmin != prevmin: 
+            index2 = count
+        prevmax = curmax
+        prevmin = curmin
+        if count > 10: 
+            switch1 = False
+        count += 1
+    print("Summary of brightness ratio")
+    print("Maximum entropy on sequence: ", index, " with the value: ", curmax)
+    print("Minimum entropy on sequence: ", index2, " with the value: ", curmin)
+    count = 1
+    count2 = 1
+    switch1 = True
+    curmax = 0
+    curmin = 999999
+    prevmax = 0
+    prevmin = 0
+    index = 0
+    index2 = 0
+    for i in data_m:
+        if switch1:
+            print("Archelogical site sequence:", count)
+        else:
+            print("Harbor site sequence: ", count2)
+            count2 += 1
+        cur = en.calculate_shannon_entropy(i)
+        print("Entropy of sequence: ", cur)
+        curmax = max(curmax, cur)
+        curmin = min(curmin, cur)
+        if curmax != prevmax: 
+            index = count
+        if curmin != prevmin: 
+            index2 = count
+        prevmax = curmax
+        prevmin = curmin
+        if count > 10: 
+            switch1 = False
+        count += 1
+    print("Summary of mean")
+    print("Maximum entropy on sequence: ", index, " with the value: ", curmax)
+    print("Minimum entropy on sequence: ", index2, " with the value: ", curmin) 
+
+def print_aqualoc_entropy_mb(data):
+    count = 1
+    count2 = 1
+    switch1 = True
+    curmax = 0
+    curmin = 999999
+    prevmax = 0
+    prevmin = 0
+    index = 0
+    index2 = 0
+    for i in data:
+        if switch1:
+            print("Archelogical site sequence:", count)
+        else:
+            print("Harbor site sequence: ", count2)
+            count2 += 1
+        cur = en.calculate_shannon_entropy(i)
+        print("Entropy of sequence: ", cur)
+        curmax = max(curmax, cur)
+        curmin = min(curmin, cur)
+        if curmax != prevmax: 
+            index = count
+        if curmin != prevmin: 
+            index2 = count
+        prevmax = curmax
+        prevmin = curmin
+        if count > 10: 
+            switch1 = False
+        count += 1
+    print("Summary of brightness ratio")
+    print("Maximum entropy on sequence: ", index, " with the value: ", curmax)
+    print("Minimum entropy on sequence: ", index2, " with the value: ", curmin)
+
+## Section for printing velocity related metrics
+def print_velocity_euroc(dataframes):
+    curmax = 0
+    curmin = 999999
+    prevmax = 0
+    prevmin = 0
+    count = 1
+    switch1 = False
+    switch2 = False
+    sns.set_palette("pastel")
+    f, ax = plt.subplots(len(dataframes))
+    tracker = 0
+    for i in dataframes:
+        # Choose string to print
+        # Calculate entropy and print
+        cur = en.calculate_shannon_entropy(i)
+        if not switch1 and not switch2:
+            s = "Machine Hall: " + str(count)
+        if switch1 and not switch2:
+            s = "Vicon Room 1: " + str(count2)
+            count2 += 1
+        if switch1 and switch2:
+            s = "Vicon Room 2: " + str(count2)
+            count2 += 1
+        print(s, " : ", cur)
+        
+        
+        # Plot
+        ax[tracker].set_title(s)
+        sns.histplot(data=i,bins=feedman_bins(i),ax=ax[tracker])
+        
+        # Find max and min entropy
+        curmax = max(curmax, cur)
+        curmin = min(curmin, cur)
+        if curmax != prevmax: 
+            index = count
+        if curmin != prevmin: 
+            index2 = count
+        prevmax = curmax
+        prevmin = curmin
+        count += 1
+        if count == 6: 
+            switch1 = True
+        if count == 9:
+            switch2 = True
+            count2 = 1
+        tracker += 1
+    print("Maximum entropy on sequence: ", index, " with the value: ", curmax)
+    print("Minimum entropy on sequence: ", index2, " with the value: ", curmin) 
+    f.set_figheight(len(dataframes)*3)
+    plt.tight_layout()
+    plt.show()
+        
