@@ -51,6 +51,19 @@ def create_b_histogram_euroc(data_tuple, number):
     plt.tight_layout()
     plt.show()
     
+def create_b_histogram_kitti(data):
+    n = len(data)
+    f, ax = plt.subplots(n)
+    counter = 0
+    for i in data:
+        sns.histplot(i, bins=feedman_bins(i), kde=True, ax=ax[counter])
+        s = "KITTI Sequence: " + str(counter)
+        ax[counter].set_title(s)
+        counter += 1
+    f.set_figheight(len(data)*3)
+    plt.tight_layout()
+    plt.show()
+    
 # Function to plot histograms for AQUALOC
 def create_b_histogram_aqualoc(data, title: str):
     sns.set_palette("pastel")
@@ -414,4 +427,27 @@ def print_velocity_euroc(dataframes):
     f.set_figheight(len(dataframes)*3)
     plt.tight_layout()
     plt.show()
-        
+
+def print_kitti_entropy_mb(data, title: str):
+    count = 0
+    curmax = 0
+    curmin = 999999
+    prevmax = 0
+    prevmin = 0
+    index = 0
+    print("KITTI Sequences entropy, metric: ", title)
+    for i in data:
+        cur = en.calculate_shannon_entropy(i)
+        print("Entropy of sequence: ", count, cur)
+        curmax = max(curmax, cur)
+        curmin = min(curmin, cur)
+        if curmax != prevmax: 
+            index = count
+        if curmin != prevmin: 
+            index2 = count
+        prevmax = curmax
+        prevmin = curmin
+        count += 1
+    print("Summary of metric: ", title)
+    print("Maximum entropy on sequence: ", index, " with the value: ", curmax)
+    print("Minimum entropy on sequence: ", index2, " with the value: ", curmin)

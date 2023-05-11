@@ -106,5 +106,28 @@ def load_aurora_dataset(supress_output: bool):
         
     return res
 
-
+def load_kitti_dataset():
+    # Setup directories using os 
+    img_folder = 'KITTI/dataset/sequences'
+    cur_dir = os.path.normpath(os.getcwd() + os.sep + os.pardir)
+    dir = cur_dir + "/" + dataset_folder + "/" + img_folder
+    data = os.listdir(dir)
+    
+    # Setup lists and variables
+    res = []
+    counter = 0
+    sum =  0
+    
+    # Iterate over folders
+    for sequencefolder in data:
+        for subfolder in os.listdir(os.path.join(dir, sequencefolder)): 
+            placeholder = []
+            for file in os.listdir(os.path.join(dir, sequencefolder, subfolder)):
+                placeholder.append(motion_blur_laplacian(bp.load_to_colorspace(imread(os.path.join(dir,sequencefolder, subfolder, file)), "GRAY")))
+                counter += 1
+            sum += counter
+            res.append(placeholder)
+            print("Scanning next folder current total of images processed: ", sum)
+            counter = 0
+    return res
 
